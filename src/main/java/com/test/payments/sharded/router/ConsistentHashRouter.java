@@ -30,6 +30,7 @@ public class ConsistentHashRouter implements DataSourceRouter {
     }
 
     @Override
+    // TODO datasource wrapper
     public void addDataSource(DataSource dataSource) {
         try {
             ring.put(routeFunction.getValue(dataSource.getConnection().getMetaData().getURL()), new ShardingDataSource(dataSource));
@@ -40,7 +41,7 @@ public class ConsistentHashRouter implements DataSourceRouter {
 
     @Override
     public void removeDataSource(DataSource DataSource) {
-
+        //TODO
     }
 
     @Override
