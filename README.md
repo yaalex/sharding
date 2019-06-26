@@ -11,3 +11,5 @@ docker run --detach --name=mysql3 -p 3308:3306  --env="MYSQL_ROOT_PASSWORD=12345
 
 TODO:
 шардить на datasource, а готовые сервисы - позволит прикруить транзакционность без проблем
+security
+swagger
