@@ -19,7 +19,6 @@ import javax.sql.DataSource;
 public class DataSourceConfig {
 
     @Bean(name = "datasource1")
-    @Primary
     @ConfigurationProperties(prefix="spring.datasource.first")
     public DataSource firstDataSource() {
         return DataSourceBuilder.create().build();
@@ -37,7 +36,7 @@ public class DataSourceConfig {
         return DataSourceBuilder.create().build();
     }
 
-    // TODO разобраться в какие аннотации указывать
+    // TODO разобраться нужны ли вообще
     @Bean(name="tm1")
     @Autowired
     DataSourceTransactionManager tm1(@Qualifier ("datasource1") DataSource datasource) {

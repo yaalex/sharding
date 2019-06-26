@@ -10,12 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class PaymentsServiceImpl implements PaymentsService {
     private static final Logger LOG = LoggerFactory.getLogger(PaymentsServiceImpl.class.getName());
     private ModelMapper mapper;
@@ -46,9 +45,9 @@ public class PaymentsServiceImpl implements PaymentsService {
     }
 
     @Override
-    public List<PaymentDto> getPaymentsForSender(String senderId) {
+    public Long getPaymentsForSender(String senderId) {
         List<Payment> payments = paymentDao.getPaymentsBySender(senderId);
-        return mapper.map(payments, new TypeToken<List<PaymentDto>>() {
-        }.getType());
+        long sumBySender = payments.stream().map(Payment::getAmount).mapToLong(Long::longValue).sum();
+        return sumBySender;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+// TODO накрутить security
 @RestController
 @RequestMapping(path = "/payments", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class PaymentController {
@@ -23,9 +24,8 @@ public class PaymentController {
         this.service = service;
     }
 
-    // TODO накрутить security
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> process(@RequestBody PaymentDto paymentDto) {
+    public ResponseEntity<?> save(@RequestBody PaymentDto paymentDto) {
         PaymentDto dto = service.save(paymentDto);
         return ResponseEntity.ok().body(dto);
     }
@@ -35,8 +35,8 @@ public class PaymentController {
         return ResponseEntity.ok(service.getPayments());
     }
 
-    @RequestMapping(path = "/sender/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getPaymentsForSender(@PathVariable("id") String sender) {
+    @RequestMapping(path = "/sender/{name}", method = RequestMethod.GET)
+    public ResponseEntity<?> getPaymentsForSender(@PathVariable("name") String sender) {
         return ResponseEntity.ok(service.getPaymentsForSender(sender));
     }
 

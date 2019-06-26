@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -30,7 +29,7 @@ public class RuntimeExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR.name(), 500);
     }
 
-    @ExceptionHandler(value = { AccessDeniedException.class })
+//    @ExceptionHandler(value = { AccessDeniedException.class })
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponseDto accessDeniedException(Exception ex, WebRequest req) {
         LOG.error("Catched exception:", ex);
@@ -39,8 +38,8 @@ public class RuntimeExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = { PaymentException.class })
-    public ResponseEntity<?> cardsMobileException(PaymentException ex, WebRequest req) {
-        LOG.error("Catched CardsMobileException:", ex);
+    public ResponseEntity<?> PaymentException(PaymentException ex, WebRequest req) {
+        LOG.error("Catched PaymentException:", ex);
         return new ResponseEntity<>(new ErrorResponseDto(ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT), ex.getMessage(), ex
                 .getHttpStatus().name(), ex.getHttpStatus().value()), ex.getHttpStatus());
     }

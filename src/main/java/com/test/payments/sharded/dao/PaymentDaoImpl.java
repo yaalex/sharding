@@ -6,25 +6,29 @@ import com.test.payments.sharded.model.Payment;
 import com.test.payments.sharded.router.DataSourceRouter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Repository
-@Transactional(readOnly = true)
-public class PaymentDaoImpl extends JdbcDaoSupport implements PaymentDao {
+public class PaymentDaoImpl implements PaymentDao {
     private static final String SELECT_ALL = "select * from payment";
-    private static final String SELECT_ALL_BY_SENDER = SELECT_ALL + " where sender = ? ";
+    private static final String SELECT_ALL_BY_SENDER = SELECT_ALL + " where sender like ? "; // пусть пока так
 
     @Autowired
+    @Qualifier("orderNumberRouter")
     private DataSourceRouter router;
 
     @Override
@@ -38,20 +42,24 @@ public class PaymentDaoImpl extends JdbcDaoSupport implements PaymentDao {
 
     @Override
     public List<Payment> getPaymentsBySender(String sender) {
-        return router.routeDataSource(sender).getJdbcTemplate().query(SELECT_ALL_BY_SENDER, new PaymentMapper(), sender);
+        return router.routeDataSource(sender).getJdbcTemplate().query(SELECT_ALL_BY_SENDER, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps) throws SQLException {
+                ps.setString(1, sender);
+            }
+        }, new PaymentMapper());
     }
 
-    @Transactional
     @Override
     public Payment save(Payment payment) {
         JdbcTemplate jdbcTemplate = router.routeDataSource(payment.getSender()).getJdbcTemplate();
         Map<String, Object> params = new HashMap<>();
+        String id = UUID.randomUUID().toString();
+        params.put("id", id); // TODO плохо, но mysql тяжко живет с UUID
         params.put("sender", payment.getSender());
         params.put("receiver", payment.getReceiver());
         params.put("amount", payment.getAmount());
-        Long id =
-                (Long) new SimpleJdbcInsert(jdbcTemplate).withTableName("payments").usingGeneratedKeyColumns("id")
-                        .executeAndReturnKey(new MapSqlParameterSource(params));
+        new SimpleJdbcInsert(jdbcTemplate).withTableName("payment").execute(new MapSqlParameterSource(params));
         payment.setId(id);
         return payment;
     }

@@ -2,7 +2,6 @@ package com.test.payments.sharded.router;
 
 import com.test.payments.sharded.datasource.ShardingDataSource;
 
-import java.sql.SQLException;
 import java.util.Collection;
 
 import javax.sql.DataSource;
@@ -12,7 +11,7 @@ public interface DataSourceRouter {
     /**
      * add datasource
      */
-    public void addDataSource(DataSource DataSource) throws SQLException;
+    public void addDataSource(DataSource DataSource);
 
     /**
      * remove datasource

@@ -20,8 +20,8 @@ public class ConsistentHashRouter implements DataSourceRouter {
     private RouteFunction routeFunction;
 
     @Autowired
-    public ConsistentHashRouter(Collection<DataSource> dataSources, RouteFunction routeFunction) {
-        this.routeFunction = routeFunction;
+    public ConsistentHashRouter(Collection<DataSource> dataSources) {
+        this.routeFunction = new MD5Hash();
         if (dataSources != null) {
             for (DataSource dataSource : dataSources) {
                 addDataSource(dataSource);

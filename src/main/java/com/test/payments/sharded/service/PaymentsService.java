@@ -10,6 +10,6 @@ public interface PaymentsService {
 
     List<PaymentDto> getPayments();
 
-    List<PaymentDto> getPaymentsForSender(String senderId);
+    Long getPaymentsForSender(String senderId);
 
 }

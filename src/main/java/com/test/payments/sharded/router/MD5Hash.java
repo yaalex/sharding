@@ -6,7 +6,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 // стащено в просторов гитхаба
-@Component
 public class MD5Hash implements RouteFunction {
     private MessageDigest instance;
 
@@ -14,9 +13,15 @@ public class MD5Hash implements RouteFunction {
         try {
             instance = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Cant create md5 hash function:", e);
         }
     }
 
+    /**
+     * понятия не имею, что происходит
+     * @param key
+     * @return
+     */
     @Override
     public Long getValue(String key) {
         instance.reset();
